@@ -1,6 +1,16 @@
-import java.util.Arrays;
+import java.util.Random;
 
 public class GreyWolfOptimizer {
+
+    private static final int MATCH = 0;
+
+    private static final int GAP_B = 1;
+
+    private static final int GAP_A = 2;
+
+    private static final int GAP_OPEN = -5;
+
+    private static final int GAP_EXTEND = -1;
 
     private final int populationSize;
 
@@ -12,17 +22,21 @@ public class GreyWolfOptimizer {
 
     private final String sequenceB;
 
-    private double[][] wolves;
+    private int[][] wolves;
+
+    private int [] alpha;
+
+    private int [] beta;
+
+    private int [] delta;
 
     private double[] fitness;
 
-    private double [] alpha, beta, delta;
+    private double alphaScore = -1e9;
 
-    private double alphaScore = Double.NEGATIVE_INFINITY;
+    private double betaScore = -1e9;
 
-    private double betaScore = Double.NEGATIVE_INFINITY;
-
-    private double deltaScore = Double.NEGATIVE_INFINITY;
+    private double deltaScore = -1e9;
 
     public GreyWolfOptimizer(int populationSize, int dimension, int maxIterations, String sequenceA, String sequenceB) {
         this.populationSize = populationSize;
@@ -31,12 +45,12 @@ public class GreyWolfOptimizer {
         this.sequenceA = sequenceA;
         this.sequenceB = sequenceB;
 
-        this.wolves = new double[populationSize][dimension];
-        this.fitness = new double[populationSize];
+        this.wolves = new int[populationSize][dimension];
+        this.alpha = new int[dimension];
+        this.beta = new int[dimension];
+        this.delta = new int[dimension];
 
-        this.alpha = new double[dimension];
-        this.beta = new double[dimension];
-        this.delta = new double[dimension];
+        this.fitness = new double[populationSize];
     }
 
     public void optimize() {
@@ -44,8 +58,7 @@ public class GreyWolfOptimizer {
 
         for (int iteration = 0; iteration < this.maxIterations; iteration++) {
             for (int i = 0; i < this.populationSize; i++) {
-                int[] discreteWolf = this.toIntArray(this.wolves[i]);
-                this.fitness[i] = this.evaluate(discreteWolf);
+                this.fitness[i] = this.evaluate(this.wolves[i]);
             }
 
             this.updateHierarchy();
@@ -57,8 +70,9 @@ public class GreyWolfOptimizer {
         }
     }
 
+    // TODO: Fix this.
     public void printBestAlignment() {
-        int[] best = this.toIntArray(this.alpha);
+        int[] best = this.alpha;
 
         StringBuilder alignedA = new StringBuilder();
         StringBuilder alignedB = new StringBuilder();
@@ -87,43 +101,60 @@ public class GreyWolfOptimizer {
     }
 
     private void initialize() {
+        Random random = new Random();
+
         for (int i = 0; i < populationSize; i++) {
             for (int j = 0; j < dimension; j++) {
-                this.wolves[i][j] = Math.random() < 0.5 ? 0 : 1;
+                this.wolves[i][j] = random.nextInt(3);
             }
         }
     }
 
-    private int[] toIntArray(double[] wolf) {
-        int[] array = new int[wolf.length];
-
-        for (int i = 0; i < wolf.length; i++) {
-            array[i] = wolf[i] > 0.5 ? 1 : 0;
-        }
-
-        return array;
-    }
-
     private int evaluate(int[] wolf) {
-        int score = 0;
+        int i = 0;
         int j = 0;
+        int score = 0;
+        boolean gapA = false;
+        boolean gapB = false;
 
-        for (int i = 0; i < wolf.length; i++) {
-            if (wolf[i] == 1) {
-                score -= 2; // Gap.
-            } else {
-                if (j >= this.sequenceB.length()) {
-                    score -= 2;
-                    continue;
+        for (int k = 0; k < wolf.length; k++) {
+            int operation = wolf[k];
+
+            if (operation == MATCH) {
+                gapA = false;
+                gapB = false;
+
+                if (i < this.sequenceA.length() && j < this.sequenceB.length()) {
+                    score += Blosum62.score(this.sequenceA.charAt(i), this.sequenceB.charAt(j));
+                    i++;
+                    j++;
                 }
-
-                if (this.sequenceA.charAt(i) == this.sequenceB.charAt(j)) {
-                    score += 2;
+            } else if (operation == GAP_B) {
+                if (!gapB) {
+                    score += GAP_OPEN;
                 } else {
-                    score -= 1;
+                    score += GAP_EXTEND;
                 }
 
-                j++;
+                gapB = true;
+                gapA = false;
+
+                if (i < this.sequenceA.length()) {
+                    i++;
+                }
+            } else if (operation == GAP_A) {
+                if (!gapA) {
+                    score += GAP_OPEN;
+                } else {
+                    score += GAP_EXTEND;
+                }
+
+                gapA = true;
+                gapB = false;
+
+                if (j < this.sequenceB.length()) {
+                    j++;
+                }
             }
         }
 
@@ -131,25 +162,29 @@ public class GreyWolfOptimizer {
     }
 
     private void updateHierarchy() {
+        this.alphaScore = -1e9;
+        this.betaScore = -1e9;
+        this.deltaScore = -1e9;
+
         for (int i = 0; i < this.populationSize; i++) {
             if (this.fitness[i] > this.alphaScore) {
                 this.deltaScore = this.betaScore;
-                this.delta = Arrays.copyOf(this.beta, this.dimension);
+                this.delta = this.beta.clone();
 
                 this.betaScore = this.alphaScore;
-                this.beta = Arrays.copyOf(this.alpha, this.dimension);
+                this.beta = this.alpha.clone();
 
                 this.alphaScore = this.fitness[i];
-                this.alpha = Arrays.copyOf(this.wolves[i], this.dimension);
+                this.alpha = this.wolves[i].clone();
             } else if (this.fitness[i] > this.betaScore) {
                 this.deltaScore = this.betaScore;
-                this.delta = Arrays.copyOf(this.beta, this.dimension);
+                this.delta = this.beta.clone();
 
                 this.betaScore = this.fitness[i];
-                this.beta = Arrays.copyOf(this.wolves[i], this.dimension);
+                this.beta = this.wolves[i].clone();
             } else if (this.fitness[i] > this.deltaScore) {
                 this.deltaScore = this.fitness[i];
-                this.delta = Arrays.copyOf(this.wolves[i], this.dimension);
+                this.delta = this.wolves[i].clone();
             }
         }
     }
@@ -165,7 +200,7 @@ public class GreyWolfOptimizer {
                 double a1 = 2 * a * r1 - a;
                 double c1 = 2 * r2;
                 double dAlpha = Math.abs(c1 * this.alpha[j] - this.wolves[i][j]);
-                double x1 = this.alpha[j] - a1 - dAlpha;
+                double x1 = this.alpha[j] - a1 * dAlpha;
 
                 double a2 = 2 * a * Math.random() - a;
                 double c2 = 2 * Math.random();
@@ -177,10 +212,9 @@ public class GreyWolfOptimizer {
                 double dDelta = Math.abs(c3 * this.delta[j] - this.wolves[i][j]);
                 double x3 = this.delta[j] - a3 * dDelta;
 
-                double newPosition = (x1 + x2 + x3) / 3.0;
+                int newPosition = (int) Math.round((x1 + x2 + x3) / 3.0);
 
-                // Discretization
-                this.wolves[i][j] = newPosition > 0.5 ? 1 : 0;
+                this.wolves[i][j] = Math.max(0, Math.min(2, newPosition));
             }
         }
     }

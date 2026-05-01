@@ -1,14 +1,16 @@
 public class App {
 
     public static void main(String[] args) {
+        final int populationSize = 30;
+        final int dimension = 20;
+        final int maxIterations = 100;
         final String sequenceA = "ACGTACGT";
         final String sequenceB = "AGTAC";
 
-        int dimension = sequenceA.length();
-        GreyWolfOptimizer gwo = new GreyWolfOptimizer(20, dimension, 100, sequenceA, sequenceB);
+        GreyWolfOptimizer gwo = new GreyWolfOptimizer(populationSize, dimension, maxIterations, sequenceA, sequenceB);
 
         gwo.optimize();
-        gwo.printBestAlignment();
+        // gwo.printBestAlignment();
     }
 
 }
