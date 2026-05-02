@@ -1,4 +1,6 @@
 import time
+import pandas
+import matplotlib.pyplot as plot
 from GreyWolfOptimizer import GreyWolfOptimizer
 
 
@@ -19,6 +21,20 @@ def main() -> None:
 
     gwo.print_best_alignment()
 
+    convergence_data: pandas.DataFrame = pandas.DataFrame({
+        'iteration': range(len(gwo.convergence)),
+        'score': gwo.convergence
+    })
+
+    plot.figure()
+    plot.plot(convergence_data["iteration"], convergence_data["score"])
+    plot.xlabel("Iteration")
+    plot.ylabel("Best Score")
+    plot.title("GWO Convergence Curve")
+    plot.grid()
+
+    plot.savefig("out/convergence.png")
+    plot.show()
 
 if __name__ == "__main__":
     main()
