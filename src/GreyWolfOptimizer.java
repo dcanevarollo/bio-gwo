@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GreyWolfOptimizer {
@@ -38,6 +40,8 @@ public class GreyWolfOptimizer {
 
     private double deltaScore = -1e9;
 
+    private List<Double> convergence = new ArrayList<>();
+
     public GreyWolfOptimizer(int populationSize, int dimension, int maxIterations, String sequenceA, String sequenceB) {
         this.populationSize = populationSize;
         this.dimension = dimension;
@@ -64,32 +68,35 @@ public class GreyWolfOptimizer {
             this.updateHierarchy();
             this.updatePositions(iteration);
 
-            if (iteration % 10 == 0) {
-                System.out.println("Iteration " + iteration + " | Best score: " + this.alphaScore);
-            }
+            this.convergence.add(this.alphaScore);
         }
     }
 
-    // TODO: Fix this.
     public void printBestAlignment() {
         int[] best = this.alpha;
 
         StringBuilder alignedA = new StringBuilder();
         StringBuilder alignedB = new StringBuilder();
 
+        int i = 0;
         int j = 0;
-        for (int i = 0; i < best.length; i++) {
-            if (best[i] == 1) {
-                alignedA.append(this.sequenceA.charAt(i));
-                alignedB.append("-");
-            } else {
-                if (j < this.sequenceB.length()) {
-                    alignedA.append(this.sequenceA.charAt(i));
-                    alignedB.append(this.sequenceB.charAt(j));
-                    j++;
-                } else {
-                    alignedA.append(this.sequenceA.charAt(i));
+        for (int k = 0; k < best.length; k++) {
+            int operation = best[k];
+
+            if (operation == MATCH) {
+                if (i < this.sequenceA.length() && j < this.sequenceB.length()) {
+                    alignedA.append(this.sequenceA.charAt(i++));
+                    alignedB.append(this.sequenceB.charAt(j++));
+                }
+            } else if (operation == GAP_B) {
+                if (i < this.sequenceA.length()) {
+                    alignedA.append(this.sequenceA.charAt(i++));
                     alignedB.append("-");
+                }
+            } else if (operation == GAP_A) {
+                if (j < this.sequenceB.length()) {
+                    alignedA.append("-");
+                    alignedB.append(this.sequenceB.charAt(j++));
                 }
             }
         }
@@ -125,9 +132,7 @@ public class GreyWolfOptimizer {
                 gapB = false;
 
                 if (i < this.sequenceA.length() && j < this.sequenceB.length()) {
-                    score += Blosum62.score(this.sequenceA.charAt(i), this.sequenceB.charAt(j));
-                    i++;
-                    j++;
+                    score += Blosum62.score(this.sequenceA.charAt(i++), this.sequenceB.charAt(j++));
                 }
             } else if (operation == GAP_B) {
                 if (!gapB) {
