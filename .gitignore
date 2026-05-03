@@ -224,3 +224,4 @@ __marimo__/
 
 # Output
 out/*.png
+out/*.csv
