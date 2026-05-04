@@ -1,0 +1,68 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc}
+\usepackage{graphicx,url}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+
+\sloppy
+
+\title{Análise de complexidade do algoritmo Grey Wolf Optimizer\\(Otimização dos Lobos Cinzentos)\\para alinhamento de sequências com uso de discretização para\\aplicabilidade}
+
+\author{Douglas A. C. Canevarollo\inst{1}}
+
+\address{
+  Laboratório de Bioinformática\\
+  Universidade Estadual Paulista (UNESP)\\Instituto de Biociências, Letras e Ciências Exatas (IBILCE)\\São José do Rio Preto, SP -- Brasil
+  \email{douglas.canevarollo@unesp.br}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Abstract here.
+\end{abstract}
+
+\begin{resumo} 
+Resumo aqui.
+\end{resumo}
+
+\maketitle
+
+\section{Introdução}
+
+O alinhamento de sequências biológicas é um problema fundamental em bioinformática, com aplicações que incluem a
+identificação de similaridade entre genes, inferência filogenética e análise funcional de proteínas. Métodos clássicos,
+como o algoritmo de Needleman-Wunsch para alinhamento global \cite{needleman} e o algoritmo de Smith-Waterman para
+alinhamento local \cite{smith}, oferecem soluções ótimas baseadas em programação dinâmica. No entanto, esses métodos
+apresentam complexidade de tempo e espaço quadrática em relação ao tamanho das sequências, o que pode se tornar um fator
+limitante em aplicações envolvendo grandes volumes de dados.
+
+Diante desse cenário, abordagens baseadas em meta-heurísticas têm sido exploradas como alternativas para lidar com
+problemas de otimização de alta complexidade computacional \cite{geraldo}. Entre essas abordagens, destaca-se o Grey
+Wolf Optimizer (GWO) \cite{gwo}, um algoritmo inspirado no comportamento social e na estratégia de caça de lobos
+cinzentos. Originalmente proposto para problemas contínuos, o GWO tem sido adaptado para domínios discretos, permitindo
+sua aplicação em problemas como o alinhamento de sequências \cite{gwomsa}.
+
+Entretanto, a utilização do GWO nesse contexto levanta questões relevantes quanto à sua eficiência computacional,
+especialmente considerando a necessidade de discretização das soluções e o custo associado à avaliação de alinhamentos.
+Embora meta-heurísticas, em geral, ofereçam vantagens em termos de escalabilidade e flexibilidade, elas não garantem
+soluções ótimas e seu desempenho depende fortemente de parâmetros como tamanho da população e número de iterações
+\cite{shahab}.
+
+Neste contexto, o presente trabalho tem como objetivo analisar a complexidade de tempo e espaço do algoritmo Grey Wolf
+Optimizer aplicado ao problema de alinhamento de sequências, considerando uma abordagem baseada em discretização das
+soluções. Trata-se de um estudo de revisão com caráter analítico, no qual são discutidos os principais componentes do
+algoritmo, sua adaptação ao domínio discreto e o impacto dessas escolhas na complexidade computacional.
+
+Por fim, busca-se estabelecer uma comparação teórica entre o GWO e métodos clássicos de alinhamento, destacando cenários
+em que o uso de meta-heurísticas pode ser vantajoso, bem como suas limitações.
+
+
+\bibliographystyle{sbc}
+\bibliography{references}
+
+\end{document}
