@@ -84,6 +84,17 @@ class GreyWolfOptimizer:
                     aligned_b.append(self.__seq2[j])
                     j += 1
 
+        # Handle remaining characters (same as in __evaluate)
+        while i < len(self.__seq1):
+            aligned_a.append(self.__seq1[i])
+            aligned_b.append("-")
+            i += 1
+
+        while j < len(self.__seq2):
+            aligned_a.append("-")
+            aligned_b.append(self.__seq2[j])
+            j += 1
+
         print("\nBest alignment:")
         print("".join(aligned_a))
         print("".join(aligned_b))
