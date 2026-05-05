@@ -2,11 +2,11 @@ import random
 from Bio.Align import substitution_matrices
 
 
-MATCH: int = 0
-GAP_B: int = 1
-GAP_A: int = 2
-GAP_OPEN: int = -5
-GAP_EXTEND: int = -1
+MATCH = 0
+GAP_B = 1
+GAP_A = 2
+GAP_OPEN = -5
+GAP_EXTEND = -1
 
 class GreyWolfOptimizer:
 
@@ -95,7 +95,7 @@ class GreyWolfOptimizer:
             aligned_b.append(self.__seq2[j])
             j += 1
 
-        print("\nBest alignment:")
+        print("\nMelhor alinhamento:")
         print("".join(aligned_a))
         print("".join(aligned_b))
         print("\nScore: " + str(self.__alpha_score))
