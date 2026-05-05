@@ -2,15 +2,17 @@ import random
 import requests
 import time
 import tracemalloc
+import numpy as np
+import matplotlib.pyplot as plt
 from io import StringIO
 from gwo import GreyWolfOptimizer
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
 
-def fetch_proteins(size=50) -> list[SeqRecord]:
+def fetch_proteins(n: int, size=10) -> list[SeqRecord]:
     params = {
-        "query": "(reviewed:true) AND (length:[100 TO 300]) AND (organism_id:9606)",
+        "query": f"(reviewed:true) AND (organism_id:9606) AND (length:[{n - 10} TO {n + 10}])",
         "format": "fasta",
         "size": size
     }
@@ -18,14 +20,14 @@ def fetch_proteins(size=50) -> list[SeqRecord]:
     response = requests.get("https://rest.uniprot.org/uniprotkb/search", params=params)
 
     if response.status_code != 200:
-        raise Exception("Error while accessing UnitProt")
+        raise Exception("Erro ao acessar a API do UniProt")
 
     fasta_data = response.text
     sequences = list(SeqIO.parse(StringIO(fasta_data), "fasta"))
 
     return sequences
 
-def sample_pairs(sequences: list[SeqRecord], n_pairs=10) -> list[tuple[SeqRecord, SeqRecord]]:
+def sample_pairs(sequences: list[SeqRecord], n_pairs=5) -> list[tuple[SeqRecord, SeqRecord]]:
     pairs = []
     for _ in range(n_pairs):
         sequence1, sequence2 = random.sample(sequences, 2)
@@ -67,3 +69,29 @@ def run_alignment(seq1: str | SeqRecord, seq2: str | SeqRecord, population_size=
     print(f"Memória consumida: {(memory_usage / (1024 * 1024)):.2f} MiB")
 
     return convergence, best_fitness, elapsed_time, memory_usage
+
+def fetch_data(n: int) -> tuple[list[SeqRecord], list[tuple[SeqRecord, SeqRecord]]]:
+    sequences = fetch_proteins(n)
+    pairs = sample_pairs(sequences)
+    print(f"{len(sequences)} sequências baixadas")
+    print(f"{len(pairs)} pares combinados")
+
+    return sequences, pairs
+
+def plot_result(x_data: list, y_data: list, title: str, x_label: str, y_label: str) -> None:
+    x = np.array(x_data)
+    y = np.array(y_data)
+    mean = np.mean(y, axis=0)
+    std = np.std(y, axis=0)
+
+    plt.figure(figsize=(10, 6))
+    for i in range(len(y)):
+        plt.plot(x, y[i], "o", color="green", alpha=0.3, label=f"Dados" if i == 0 else "")
+        
+    plt.plot(x, mean, color="blue", linewidth=2, label="Média")
+    plt.fill_between(x, mean - std, mean + std, color="blue", alpha=0.2, label="±1 Desvio Padrão")
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.legend()
+    plt.show()
