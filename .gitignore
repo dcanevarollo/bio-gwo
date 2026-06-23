@@ -219,9 +219,13 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# VS Code
+# IDE
 .vscode
+.idea
 
 # Output
 out/*.png
 out/*.csv
+
+# macOS
+.DS_Store

@@ -12,6 +12,18 @@
     abstract = {A computer adaptable method for finding similarities in the amino acid sequences of two proteins has been developed. From these findings it is possible to determine whether significant homology exists between the proteins. This information is used to trace their possible evolutionary development. The maximum match is a number dependent upon the similarity of the sequences. One of its definitions is the largest number of amino acids of one protein that can be matched with those of a second protein allowing for all possible interruptions in either of the sequences. While the interruptions give rise to a very large number of comparisons, the method efficiently excludes from consideration those comparisons that cannot contribute to the maximum match. Comparisons are made from the smallest unit of significance, a pair of amino acids, one from each protein. All possible pairs are represented by a two-dimensional array, and all possible comparisons are represented by pathways through the array. For this maximum match only certain of the possible pathways must be evaluated. A numerical value, one in this case, is assigned to every cell in the array representing like amino acids. The maximum match is the largest number that would result from summing the cell values of every pathway.}
 }
 
+@article{hirschberg,
+    title = {A linear space algorithm for computing maximal common subsequences},
+    author = {Hirschberg, D. S.},
+    journal = {Communications of the ACM},
+    volume = {18},
+    number = {6},
+    pages = {341--343},
+    year = {1975},
+    doi = {10.1145/360825.360861},
+    publisher = {Association for Computing Machinery}
+}
+
 @article{smith,
     title = {Identification of common molecular subsequences},
     journal = {Journal of Molecular Biology},
@@ -115,3 +127,40 @@
   year      =  2017
 }
 
+@article{uniprot,
+    author = {The UniProt Consortium },
+    title = {UniProt: the Universal Protein Knowledgebase in 2025},
+    journal = {Nucleic Acids Research},
+    volume = {53},
+    number = {D1},
+    pages = {D609-D617},
+    year = {2025},
+    month = {01},
+    abstract = {The aim of the UniProt Knowledgebase (UniProtKB; https://www.uniprot.org/) is to provide users with a comprehensive, high-quality and freely accessible set of protein sequences annotated with functional information. In this publication, we describe ongoing changes to our production pipeline to limit the sequences available in UniProtKB to high-quality, non-redundant reference proteomes. We continue to manually curate the scientific literature to add the latest functional data and use machine learning techniques. We also encourage community curation to ensure key publications are not missed. We provide an update on the automatic annotation methods used by UniProtKB to predict information for unreviewed entries describing unstudied proteins. Finally, updates to the UniProt website are described, including a new tab linking protein to genomic information. In recognition of its value to the scientific community, the UniProt database has been awarded Global Core Biodata Resource status.},
+    issn = {1362-4962},
+    doi = {10.1093/nar/gkae1010},
+    url = {https://doi.org/10.1093/nar/gkae1010},
+    eprint = {https://academic.oup.com/nar/article-pdf/53/D1/D609/60719276/gkae1010.pdf},
+}
+
+@ARTICLE{blosum62,
+  title    = "Amino acid substitution matrices from protein blocks",
+  author   = "Henikoff, S and Henikoff, J G",
+  abstract = "Methods for alignment of protein sequences typically measure
+              similarity by using a substitution matrix with scores for all
+              possible exchanges of one amino acid with another. The most
+              widely used matrices are based on the Dayhoff model of
+              evolutionary rates. Using a different approach, we have derived
+              substitution matrices from about 2000 blocks of aligned sequence
+              segments characterizing more than 500 groups of related proteins.
+              This led to marked improvements in alignments and in searches
+              using queries from each of the groups.",
+  journal  = "Proc Natl Acad Sci U S A",
+  volume   =  89,
+  number   =  22,
+  pages    = "10915--10919",
+  month    =  nov,
+  year     =  1992,
+  address  = "United States",
+  language = "en"
+}
